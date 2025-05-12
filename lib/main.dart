@@ -65,11 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
             Text('$_counter',  style: Theme.of(context).textTheme.headlineMedium,),
 
             Image.asset("images/algonquin.jpg", width: 200,height:200),
-            Slider(
-                min:0,
-                value: _counter,
-                onChanged: setNewValue,
-            max:100)
+            ElevatedButton( onPressed: () {    },  //<-----lambda function
+                child:  Image.asset("images/algonquin.jpg", width: 200, height:200)  )
+
           ],
         ),
       ),
@@ -86,6 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter = value;
     }); //update the GUI to new values
+  }
+
+
+  void buttonClicked(){
 
   }
 }
