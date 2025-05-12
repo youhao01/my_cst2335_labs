@@ -42,8 +42,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double _counter = 0;
+  late TextEditingController _controller; //this is to read what was typed
+
+
 
   var isChecked = false;
+
+  @override
+  void initState() { //similar to onloaded=
+    super.initState();
+
+    _controller = TextEditingController(); //making _controller
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose(); // free the memory of what was typed
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -69,7 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
             Semantics(child: Image.asset("images/algonquin.jpg", width: 200,height:200),
               label:"This is an image of Algonquin college"   ),
 
-            ElevatedButton( onPressed: () {    },  //<-----lambda function
+            ElevatedButton( onPressed: () {
+              _controller.text = "You clicked the button";
+
+            },  //<-----lambda function
                 child:  Image.asset("images/algonquin.jpg", width: 200, height:200)  ),
 
             Checkbox(value: isChecked,
@@ -85,9 +104,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       isChecked = newVal;
                     });
-
               }),
-
+            TextField(controller: _controller,
+                decoration: InputDecoration(
+                    hintText:"Type here",
+                    border: OutlineInputBorder(),
+                    labelText: "First name"
+                )),
           ],
         ),
       ),
