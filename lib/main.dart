@@ -43,6 +43,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double _counter = 0;
 
+  var isChecked = false;
+
   void _incrementCounter() {
     setState(() {
       if(_counter<99.0)
@@ -64,10 +66,21 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text('Welcome to CST2335',  style:TextStyle(letterSpacing: 5.0,fontSize: 30.0, color:Colors.blue ) ),
             Text('$_counter',  style: Theme.of(context).textTheme.headlineMedium,),
 
-            Image.asset("images/algonquin.jpg", width: 200,height:200),
-            ElevatedButton( onPressed: () {    },  //<-----lambda function
-                child:  Image.asset("images/algonquin.jpg", width: 200, height:200)  )
+            Semantics(child: Image.asset("images/algonquin.jpg", width: 200,height:200),
+              label:"This is an image of Algonquin college"   ),
 
+            ElevatedButton( onPressed: () {    },  //<-----lambda function
+                child:  Image.asset("images/algonquin.jpg", width: 200, height:200)  ),
+
+            Checkbox(value: isChecked,
+                onChanged: ( newVal ) {
+                if(newVal != null)
+                  setState(() {//update the GUI
+                    isChecked = newVal; //store the new value
+                  });
+
+
+                })
           ],
         ),
       ),
