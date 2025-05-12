@@ -78,9 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {//update the GUI
                     isChecked = newVal; //store the new value
                   });
+                }),
+            Switch(value:isChecked,
+              onChanged: (newVal){
+                  if(newVal!= null)
+                    setState(() {
+                      isChecked = newVal;
+                    });
 
+              }),
 
-                })
           ],
         ),
       ),
