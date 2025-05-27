@@ -1,29 +1,17 @@
 import 'package:flutter/material.dart';
-
 void main() {
-
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  /*
-  String  getString( {  int a = 0, double b=0.0, bool c = false }){
-
-    return "hello world";
-
-  }*/
-
   @override
   Widget build(BuildContext context) {
-
-
-
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Lab 2 - Login Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -33,7 +21,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-
   final String title;
 
   @override
@@ -41,30 +28,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double _counter = 0;
-  late TextEditingController _controller; //this is to read what was typed
-
-
-
-  var isChecked = false;
+  late TextEditingController _loginController;
+  late TextEditingController _passwordController;
+  String imageSource = "images/question.png"; // 初始图片路径
 
   @override
-  void initState() { //similar to onloaded=
+  void initState() {
     super.initState();
-
-    _controller = TextEditingController(); //making _controller
+    _loginController = TextEditingController();
+    _passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    super.dispose(); // free the memory of what was typed
+    _loginController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  void _incrementCounter() {
+  void _handleLogin() {
+    String enteredPassword = _passwordController.text;
+
     setState(() {
-      if(_counter<99.0)
-        _counter++;
+      if (enteredPassword == "QWERTY123") {
+        imageSource = "images/lightbulb.png";
+      } else {
+        imageSource = "images/stop.png";
+      }
     });
   }
 
@@ -75,62 +65,37 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Welcome to CST2335',  style:TextStyle(letterSpacing: 5.0,fontSize: 30.0, color:Colors.blue ) ),
-            Text('$_counter',  style: Theme.of(context).textTheme.headlineMedium,),
-
-            Semantics(child: Image.asset("images/algonquin.jpg", width: 200,height:200),
-              label:"This is an image of Algonquin college"   ),
-
-            ElevatedButton( onPressed: () {
-              _controller.text = "You clicked the button";
-
-            },  //<-----lambda function
-                child:  Image.asset("images/algonquin.jpg", width: 200, height:200)  ),
-
-            Checkbox(value: isChecked,
-                onChanged: ( newVal ) {
-                if(newVal != null)
-                  setState(() {//update the GUI
-                    isChecked = newVal; //store the new value
-                  });
-                }),
-            Switch(value:isChecked,
-              onChanged: (newVal){
-                  if(newVal!= null)
-                    setState(() {
-                      isChecked = newVal;
-                    });
-              }),
-            TextField(controller: _controller,
-                decoration: InputDecoration(
-                    hintText:"Type here",
-                    border: OutlineInputBorder(),
-                    labelText: "First name"
-                )),
+          children: [
+            TextField(
+              controller: _loginController,
+              decoration: const InputDecoration(
+                labelText: "Login Name",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: "Password",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _handleLogin,
+              child: const Text("Login"),
+            ),
+            const SizedBox(height: 16),
+            Image.asset(imageSource, width: 300, height: 300),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
     );
   }
-
-  void setNewValue(double value)
-  {
-    setState(() {
-      _counter = value;
-    }); //update the GUI to new values
-  }
-
-
-  void buttonClicked(){
-
-  }
 }
+
