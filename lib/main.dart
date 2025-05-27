@@ -1,221 +1,181 @@
 import 'package:flutter/material.dart';
 
-// Lab 3 - Category Page
-// Author: Youhao Yu
-// Student ID: 040795365
-// Date: 2025-05-27
-// Purpose: Display categorized food images using Column, Row, Stack, and CircleAvatar
-
 void main() {
   runApp(const MyApp());
 }
 
-// Root widget of the app
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Lab 3 - Category Page',
+      title: 'Recipe Browser',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
-        useMaterial3: true,
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const CategoryPage(),
+      home: const RecipePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-// Main category page
-class CategoryPage extends StatelessWidget {
-  const CategoryPage({super.key});
+class RecipePage extends StatelessWidget {
+  const RecipePage({super.key});
 
-  // Helper method to build an image with text under it using Stack
-  Widget buildImageWithTextBelow(String label, String imagePath, Color textColor) {
-    return Column(
-      children: [
-        Stack(
-          alignment: Alignment.center,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.green, width: 4),
+        ),
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircleAvatar(
-              backgroundImage: AssetImage(imagePath),
-              radius: 50,
+            // 1. BROWSE CATEGORIES title
+            const Text(
+              'BROWSE CATEGORIES',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+              ),
+            ),
+
+            // 2. Description text - left aligned
+            Container(
+              alignment: Alignment.centerLeft,
+              child: const Text(
+                'Not sure about exactly which recipe you\'re looking for? Do a search, or dive into our most popular categories.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
+
+            // 3. BY MEAT heading
+            const Text(
+              'BY MEAT',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+
+            // 4. Meat category images (text overlapping in center)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Beef
+                meatCategoryItem('images/Beef.jpeg', 'BEEF'),
+                // Chicken
+                meatCategoryItem('images/Chicken.webp', 'CHICKEN'),
+                // Pork
+                meatCategoryItem('images/Pork.webp', 'PORK'),
+                // Seafood
+                meatCategoryItem('images/Seafood.jpeg', 'SEAFOOD'),
+              ],
+            ),
+
+            // 5. BY COURSE heading
+            const Text(
+              'BY COURSE',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+
+            // 6. Course category images with text below (not overlapping)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Main Dishes
+                columnItem('images/Maindishes.jpeg', 'Main Dishes'),
+                // Salad Recipes
+                columnItem('images/Salad.webp', 'Salad Recipes'),
+                // Side Dishes
+                columnItem('images/SideDishes.webp', 'Side Dishes'),
+                // Crockpot
+                columnItem('images/Crockpot.webp', 'Crockpot'),
+              ],
+            ),
+
+            // 7. BY DESSERT heading
+            const Text(
+              'BY DESSERT',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+
+            // 8. Dessert category images with text below (not overlapping)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Ice Cream
+                columnItem('images/IceCream.webp', 'Ice Cream'),
+                // Brownies
+                columnItem('images/Brownies.webp', 'Brownies'),
+                // Pies
+                columnItem('images/Pies.webp', 'Pies'),
+                // Cookies
+                columnItem('images/Cookies.jpeg', 'Cookies'),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: 6),
+      ),
+    );
+  }
+
+  // Helper method for meat categories (text centered over image)
+  Widget meatCategoryItem(String imagePath, String label) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CircleAvatar(
+          backgroundImage: AssetImage(imagePath),
+          radius: 45,
+        ),
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
+          style: const TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
-            color: textColor,
+            fontSize: 16,
+            letterSpacing: 0.5,
           ),
         ),
       ],
     );
   }
 
-  // Section title formatting
-  Widget buildSectionTitle(String title) {
-    return Text(
-      title,
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        letterSpacing: 1.2,
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-
-      // Top App Bar with centered title
-      appBar: AppBar(
-        title: const Text(
-          'BROWSE CATEGORIES',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 24,
-            letterSpacing: 1.5,
+  // Helper method for course and dessert categories (text below image, not overlapping)
+  Widget columnItem(String imagePath, String label) {
+    return Column(
+      children: [
+        CircleAvatar(
+          backgroundImage: AssetImage(imagePath),
+          radius: 45,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
             color: Colors.black,
+            fontSize: 14,
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-            // Introductory text
-            const Text(
-              "Not sure about exactly which recipe you're looking for? Do a search, or dive into our most popular categories.",
-              textAlign: TextAlign.left,
-              style: TextStyle(fontSize: 14),
-            ),
-
-            // Section 1: Meat
-            const SizedBox(height: 10),
-            Center(child: buildSectionTitle("BY MEAT")),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: const AssetImage("images/Beef.jpeg"),
-                      radius: 50,
-                    ),
-                    const Text(
-                      "BEEF",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        //backgroundColor: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: const AssetImage("images/Chicken.webp"),
-                      radius: 50,
-                    ),
-                    const Text(
-                      "CHICKEN",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        //backgroundColor: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: const AssetImage("images/Pork.webp"),
-                      radius: 50,
-                    ),
-                    const Text(
-                      "PORK",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        //backgroundColor: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundImage: const AssetImage("images/Seafood.jpeg"),
-                      radius: 50,
-                    ),
-                    const Text(
-                      "SEAFOOD",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        //backgroundColor: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-
-            // Section 2: Course
-            Center(child: buildSectionTitle("BY COURSE")),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                buildImageWithTextBelow("Main Dishes", "images/Maindishes.jpeg", Colors.black),
-                buildImageWithTextBelow("Salad Recipes", "images/Salad.webp", Colors.black),
-                buildImageWithTextBelow("Side Dishes", "images/SideDishes.webp", Colors.black),
-                buildImageWithTextBelow("Crockpot", "images/Crockpot.webp", Colors.black),
-              ],
-            ),
-
-            // Section 3: Dessert
-            Center(child: buildSectionTitle("BY DESSERT")),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                buildImageWithTextBelow("Ice Cream", "images/IceCream.webp", Colors.black),
-                buildImageWithTextBelow("Brownies", "images/Brownies.webp", Colors.black),
-                buildImageWithTextBelow("Pies", "images/Pies.webp", Colors.black),
-                buildImageWithTextBelow("Cookies", "images/Cookies.jpeg", Colors.black),
-              ],
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
