@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
+import 'repository.dart'; // This is your data repository
+import 'ProfilePage.dart'; // Your second page
 
 void main() {
   runApp(const MyApp());
@@ -11,19 +13,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lab 4 - Login with Alert & Snackbar',
+      title: 'Lab 5 - Navigation & Repository',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Flutter Login Page'),
+        '/profile': (context) => const ProfilePage(),
+      },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
   final String title;
 
   @override
@@ -33,8 +38,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController _loginController;
   late TextEditingController _passwordController;
-  String imageSource = "images/question.png"; // default image
-
+  String imageSource = "images/question.png";
   final EncryptedSharedPreferences _securePrefs = EncryptedSharedPreferences();
 
   @override
@@ -42,10 +46,10 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _loginController = TextEditingController();
     _passwordController = TextEditingController();
-    _loadSavedCredentials(); // load saved login info when app starts
+    _loadSavedCredentials();
   }
 
-  // Load saved data and show Snackbar if data exists
+  // Load saved login info from encrypted preferences
   void _loadSavedCredentials() async {
     String? loginName = await _securePrefs.getString("loginName");
     String? password = await _securePrefs.getString("password");
@@ -56,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _passwordController.text = password;
       });
 
-      // Show snackbar when credentials loaded
+      // Show snackbar after credentials are loaded
       Future.delayed(Duration.zero, () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Previous login loaded.")),
@@ -65,42 +69,55 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // Prompt user with AlertDialog to save credentials
+  // Handle login logic and show AlertDialog
   void _handleLogin() {
     String enteredPassword = _passwordController.text;
+
     setState(() {
       imageSource = (enteredPassword == "QWERTY123")
           ? "images/lightbulb.png"
           : "images/stop.png";
     });
 
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Save Credentials'),
-        content: const Text('Would you like to save your login info?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () async {
-              // Save credentials to encrypted storage
-              await _securePrefs.setString("loginName", _loginController.text);
-              await _securePrefs.setString("password", _passwordController.text);
-              Navigator.pop(context);
-            },
-            child: const Text('Yes'),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Remove any saved credentials
-              await _securePrefs.remove("loginName");
-              await _securePrefs.remove("password");
-              Navigator.pop(context);
-            },
-            child: const Text('No'),
-          ),
-        ],
-      ),
-    );
+    if (enteredPassword == "QWERTY123") {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Save Credentials'),
+          content: const Text('Would you like to save your login info?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                await _securePrefs.setString("loginName", _loginController.text);
+                await _securePrefs.setString("password", _passwordController.text);
+
+                // Save login name to repository for next page
+                DataRepository.loginName = _loginController.text;
+
+                Navigator.pop(context); // Close dialog
+
+                ScaffoldMessenger.of(this.context).showSnackBar(
+                  SnackBar(content: Text("Welcome back, ${_loginController.text}!")),
+                );
+
+                Future.delayed(const Duration(seconds: 1), () {
+                  Navigator.of(this.context, rootNavigator: true).pushNamed('/profile');
+                });
+              },
+              child: const Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _securePrefs.remove("loginName");
+                await _securePrefs.remove("password");
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text('No'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override

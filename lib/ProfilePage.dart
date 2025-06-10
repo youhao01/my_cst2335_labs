@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'repository.dart'; // 确保导入你的 Repository 类
+import 'package:url_launcher/url_launcher.dart';
+import 'repository.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,13 +18,18 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    // Load repository data
+    _loadData();
+    _addListeners();
+  }
+
+  void _loadData() {
     _firstNameController.text = DataRepository.firstName;
     _lastNameController.text = DataRepository.lastName;
     _phoneController.text = DataRepository.phone;
     _emailController.text = DataRepository.email;
+  }
 
-    // Save on every change
+  void _addListeners() {
     _firstNameController.addListener(() {
       DataRepository.firstName = _firstNameController.text;
       DataRepository.saveData();
@@ -42,13 +48,46 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    super.dispose();
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Unsupported Action"),
+          content: Text("Cannot launch: $url"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _buildTextFieldRow({
+    required TextEditingController controller,
+    required String label,
+    List<Widget>? suffixButtons,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+        if (suffixButtons != null) ...suffixButtons,
+      ],
+    );
   }
 
   @override
@@ -58,52 +97,41 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text("Welcome Back: ${DataRepository.loginName}"),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
+            _buildTextFieldRow(
               controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
+              label: "First Name",
             ),
-            TextField(
+            const SizedBox(height: 12),
+            _buildTextFieldRow(
               controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
+              label: "Last Name",
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: TextField(
-                    controller: _phoneController,
-                    decoration: const InputDecoration(labelText: 'Phone Number'),
-                  ),
-                ),
+            const SizedBox(height: 12),
+            _buildTextFieldRow(
+              controller: _phoneController,
+              label: "Phone Number",
+              suffixButtons: [
                 IconButton(
+                  onPressed: () => _launchUrl("tel:${_phoneController.text}"),
                   icon: const Icon(Icons.phone),
-                  onPressed: () {
-                    // To be implemented: phone call
-                  },
                 ),
                 IconButton(
+                  onPressed: () => _launchUrl("sms:${_phoneController.text}"),
                   icon: const Icon(Icons.message),
-                  onPressed: () {
-                    // To be implemented: SMS
-                  },
                 ),
               ],
             ),
-            Row(
-              children: [
-                Flexible(
-                  child: TextField(
-                    controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email address'),
-                  ),
-                ),
+            const SizedBox(height: 12),
+            _buildTextFieldRow(
+              controller: _emailController,
+              label: "Email address",
+              suffixButtons: [
                 IconButton(
-                  icon: const Icon(Icons.email),
-                  onPressed: () {
-                    // To be implemented: mailto
-                  },
+                  onPressed: () => _launchUrl("mailto:${_emailController.text}"),
+                  icon: const Icon(Icons.mail),
                 ),
               ],
             ),
