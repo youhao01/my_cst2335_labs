@@ -18,15 +18,19 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _initializeData();
     _addListeners();
   }
 
-  void _loadData() {
-    _firstNameController.text = DataRepository.firstName;
-    _lastNameController.text = DataRepository.lastName;
-    _phoneController.text = DataRepository.phone;
-    _emailController.text = DataRepository.email;
+  Future<void> _initializeData() async {
+    await DataRepository.loadData(); // 加载加密存储中的数据
+
+    setState(() {
+      _firstNameController.text = DataRepository.firstName;
+      _lastNameController.text = DataRepository.lastName;
+      _phoneController.text = DataRepository.phone;
+      _emailController.text = DataRepository.email;
+    });
   }
 
   void _addListeners() {
@@ -75,8 +79,9 @@ class _ProfilePageState extends State<ProfilePage> {
     List<Widget>? suffixButtons,
   }) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
+        Flexible(
           child: TextField(
             controller: controller,
             decoration: InputDecoration(
@@ -85,7 +90,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
         ),
-        if (suffixButtons != null) ...suffixButtons,
+        if (suffixButtons != null) const SizedBox(width: 8),
+        if (suffixButtons != null)
+          ...suffixButtons.map((btn) => Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: btn,
+          )),
       ],
     );
   }
@@ -115,11 +125,19 @@ class _ProfilePageState extends State<ProfilePage> {
               label: "Phone Number",
               suffixButtons: [
                 IconButton(
-                  onPressed: () => _launchUrl("tel:${_phoneController.text}"),
+                  onPressed: () {
+                    if (_phoneController.text.isNotEmpty) {
+                      _launchUrl("tel:${_phoneController.text}");
+                    }
+                  },
                   icon: const Icon(Icons.phone),
                 ),
                 IconButton(
-                  onPressed: () => _launchUrl("sms:${_phoneController.text}"),
+                  onPressed: () {
+                    if (_phoneController.text.isNotEmpty) {
+                      _launchUrl("sms:${_phoneController.text}");
+                    }
+                  },
                   icon: const Icon(Icons.message),
                 ),
               ],
@@ -130,7 +148,11 @@ class _ProfilePageState extends State<ProfilePage> {
               label: "Email address",
               suffixButtons: [
                 IconButton(
-                  onPressed: () => _launchUrl("mailto:${_emailController.text}"),
+                  onPressed: () {
+                    if (_emailController.text.isNotEmpty) {
+                      _launchUrl("mailto:${_emailController.text}");
+                    }
+                  },
                   icon: const Icon(Icons.mail),
                 ),
               ],

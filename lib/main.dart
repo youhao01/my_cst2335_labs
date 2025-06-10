@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
-import 'repository.dart'; // This is your data repository
-import 'ProfilePage.dart'; // Your second page
+import 'repository.dart'; // Data repository
+import 'ProfilePage.dart'; // Second page
 
 void main() {
   runApp(const MyApp());
@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _loadSavedCredentials();
   }
 
-  // Load saved login info from encrypted preferences
+  // Load login info and user data
   void _loadSavedCredentials() async {
     String? loginName = await _securePrefs.getString("loginName");
     String? password = await _securePrefs.getString("password");
@@ -60,7 +60,9 @@ class _MyHomePageState extends State<MyHomePage> {
         _passwordController.text = password;
       });
 
-      // Show snackbar after credentials are loaded
+      // Load profile info (first name, last name, etc.)
+      await DataRepository.loadData();
+
       Future.delayed(Duration.zero, () {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Previous login loaded.")),
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  // Handle login logic and show AlertDialog
+  // Handle login logic and dialog
   void _handleLogin() {
     String enteredPassword = _passwordController.text;
 
@@ -90,11 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 await _securePrefs.setString("loginName", _loginController.text);
                 await _securePrefs.setString("password", _passwordController.text);
-
-                // Save login name to repository for next page
                 DataRepository.loginName = _loginController.text;
-
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(context);
 
                 ScaffoldMessenger.of(this.context).showSnackBar(
                   SnackBar(content: Text("Welcome back, ${_loginController.text}!")),
@@ -110,7 +109,15 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () async {
                 await _securePrefs.remove("loginName");
                 await _securePrefs.remove("password");
-                Navigator.pop(context); // Close dialog
+
+                DataRepository.loginName = _loginController.text;
+                await DataRepository.loadData(); // still load rest info
+
+                Navigator.pop(context);
+
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  Navigator.of(this.context, rootNavigator: true).pushNamed('/profile');
+                });
               },
               child: const Text('No'),
             ),
