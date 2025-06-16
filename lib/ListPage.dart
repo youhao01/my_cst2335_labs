@@ -101,7 +101,7 @@ class _ListPageContentState extends State<_ListPageContent> {
                 ElevatedButton(
                   onPressed: _addItem,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFE8C7F5),
+                    backgroundColor: Color(0xFFFDF4FC),
                   ),
                   child: const Text(
                     "Click here",
