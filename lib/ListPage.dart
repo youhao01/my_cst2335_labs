@@ -63,17 +63,7 @@ class _ListPageContentState extends State<_ListPageContent> {
       backgroundColor: const Color(0xFFFDF4FC),
       body: Column(
         children: [
-          Container(
-            color: const Color(0xFFD7BBEC),
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: const Center(
-              child: Text(
-                'Flutter Demo Home Page',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
+
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -113,7 +103,12 @@ class _ListPageContentState extends State<_ListPageContent> {
           ),
           Expanded(
             child: _items.isEmpty
-                ? const Center(child: Text("There are no items in the list"))
+                ? const Center(
+              child: Text(
+                "There are no items in the list",
+                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+            )
                 : ListView.builder(
               itemCount: _items.length,
               itemBuilder: (context, index) {
