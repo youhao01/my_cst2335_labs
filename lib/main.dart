@@ -23,7 +23,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
   late AppDatabase database;
   late ShoppingItemDao itemDao;
 
-  ShoppingItem? selectedItem; // ✅ Week9: 当前选中的 item
+  ShoppingItem? selectedItem; //  Week9: 当前选中的 item
 
   @override
   void initState() {
@@ -60,7 +60,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     }
   }
 
-  /// ✅ Week8 原始风格列表页面
+  ///  Week8 原始风格列表页面
   Widget listPage() {
     return Column(
       children: [
@@ -104,7 +104,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
               return GestureDetector(
                 onTap: () {
                   setState(() {
-                    selectedItem = shoppingList[index]; // ✅ Tap 事件
+                    selectedItem = shoppingList[index]; //  Tap 事件
                   });
                 },
                 child: Padding(
@@ -124,7 +124,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     );
   }
 
-  /// ✅ Week9: 详情页面（简洁风格 + 手机上方居中）
+  ///  Week9: 详情页面（简洁风格 + 手机上方居中）
   Widget detailsPage() {
     if (selectedItem == null) {
       return Center(child: Text("No item selected"));
@@ -140,7 +140,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         children: detailsContent(MainAxisAlignment.start),
       )
           : Align(
-        alignment: Alignment.topCenter, // ✅ 手机上方居中
+        alignment: Alignment.topCenter, //  手机上方居中
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: detailsContent(MainAxisAlignment.center),
@@ -149,7 +149,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     }
   }
 
-  /// ✅ 公共详情内容（保持 Week8 原始风格）
+  ///  公共详情内容（保持 Week8 原始风格）
   List<Widget> detailsContent(MainAxisAlignment buttonAlign) {
     return [
       Text("Item: ${selectedItem!.item}", style: TextStyle(fontSize: 20)),
@@ -185,7 +185,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     ];
   }
 
-  /// ✅ 响应式布局（加整体 Padding + 横屏右侧留空隙）
+  ///  响应式布局（加整体 Padding + 横屏右侧留空隙）
   Widget reactiveLayout(double width, double height) {
     Widget content;
     if ((width > height) && (width > 720)) {
@@ -193,11 +193,11 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(flex: 1, child: listPage()),
-          SizedBox(width: 20), // ✅ 列表与详情页之间留空隙
+          SizedBox(width: 20), //  列表与详情页之间留空隙
           Expanded(
             flex: 2,
             child: Padding(
-              padding: const EdgeInsets.only(left: 16.0), // ✅ 详情页自身增加左边距
+              padding: const EdgeInsets.only(left: 16.0), //  详情页自身增加左边距
               child: detailsPage(),
             ),
           ),
@@ -208,7 +208,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(16.0), // ✅ 整体页面边距
+      padding: const EdgeInsets.all(16.0), //  整体页面边距
       child: content,
     );
   }
